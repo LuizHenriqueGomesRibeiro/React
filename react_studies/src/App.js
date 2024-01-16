@@ -1,11 +1,13 @@
 import './App.css';
-import Styled_component from './components/styled/Styled_component';
+import { StyledButton } from './components/Button.style';
+import { StyledText } from './components/Div.style';
 
 // eslint-disable-next-line react/jsx-pascal-case
 function App() {
   return (
     <div className="App">
-      <Styled_component/>
+      <StyledButton >New button</StyledButton>
+      <StyledText/>
     </div>
   );
 }

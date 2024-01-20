@@ -1,16 +1,7 @@
-import { Button, Div } from './components/Button'
+import Encard from "./components/Box";
 
 function App(){
-  return <Div>
-          <Button>
-            <p>
-              React deu um olá!
-            </p>
-            <div>
-              
-            </div>
-          </Button>
-        </Div>
+  return <Encard/>
 }
 
 export default App

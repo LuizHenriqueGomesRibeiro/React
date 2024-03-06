@@ -1,7 +1,7 @@
-import Encard from "./components/Box";
+import Component from "./components/Component";
 
 function App(){
-  return <Encard/>
+  return <Component/>
 }
 
 export default App

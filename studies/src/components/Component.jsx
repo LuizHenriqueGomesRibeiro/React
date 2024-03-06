@@ -15,44 +15,38 @@ const boxes = [
 const BoxesComponent = () => {
   const [activeBoxes, setActiveBoxes] = useState([]);
 
-  const handleClick = id => {
-    setActiveBoxes(current => {
+  const handleClick = (id) => {
+    setActiveBoxes((current) => {
       const isActive = current.includes(id);
-      return isActive ? current.filter(boxId => boxId !== id) : [...current, id];
+      return isActive ? current.filter((boxId) => boxId !== id) : [...current, id];
     });
   };
 
   const transitions = useTransition(activeBoxes, {
-    keys: item => item,
-    from: { opacity: 0, transform: 'translateX(0px)' },
-    enter: item => {
+    keys: (item) => item,
+    from: { opacity: 0, transform: 'translateX(0px) translateY(0px)' },
+    enter: (item) => {
       const index = activeBoxes.indexOf(item);
-      const yPos = index >= 4 ? 120 : 0; // Posição Y baseada no índice, move para baixo se for a 5ª caixa ou posterior
-      const xPos = (index % 4) * 110 - (Math.min(activeBoxes.length, 4) - 1) * 55; // Posição X baseada no índice, ajustando para o número de caixas na linha
-      return { opacity: 1, transform: `translate(${xPos}px, ${yPos}px)` };
+      const xPos = index % 4 * 110 - 165; // Centraliza as caixas ao ajustar pela largura
+      const yPos = Math.floor(index / 4) * 120; // Move caixas para uma nova linha após a 4ª caixa
+      return { opacity: 1, transform: `translateX(${xPos}px) translateY(${yPos}px)` };
     },
-    update: item => {
-      const index = activeBoxes.indexOf(item);
-      const yPos = index >= 4 ? 120 : 0;
-      const xPos = (index % 4) * 110 - (Math.min(activeBoxes.length, 4) - 1) * 55;
-      return { opacity: 1, transform: `translate(${xPos}px, ${yPos}px)` };
-    },
-    leave: { opacity: 0, transform: 'translateX(0px)' },
+    leave: { opacity: 0, transform: 'translateX(0px) translateY(0px)' },
     config: { tension: 200, friction: 20 },
   });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>
       <div style={{ marginBottom: '20px' }}>
-        {boxes.map(box => (
+        {boxes.map((box) => (
           <button key={box.id} onClick={() => handleClick(box.id)} style={{ margin: '5px' }}>
             Toggle Box {box.id}
           </button>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', minHeight: '240px', width: '440px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', minHeight: '240px', flexWrap: 'wrap' }}>
         {transitions((style, item) => {
-          const box = boxes.find(box => box.id === item);
+          const box = boxes.find((b) => b.id === item);
           return (
             <animated.div
               key={item}

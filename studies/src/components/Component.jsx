@@ -1,59 +1,74 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import { useTransition, animated } from 'react-spring';
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-`;
+const boxes = [
+  { id: 1, color: 'tomato' },
+  { id: 2, color: 'gold' },
+  { id: 3, color: 'aquamarine' },
+  { id: 4, color: 'coral' },
+  { id: 5, color: 'lightgreen' },
+  { id: 6, color: 'skyblue' },
+  { id: 7, color: 'plum' },
+  { id: 8, color: 'lightsteelblue' },
+];
 
-const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 880px; // Ensure this is enough to fit 4 boxes considering their width and margin.
-  gap: 20px; // This sets both vertical and horizontal gaps between items.
-`;
+const BoxesComponent = () => {
+  const [activeBoxes, setActiveBoxes] = useState([]);
 
-const Button = styled.button`
-  margin: 5px;
-  padding: 10px;
-`;
-
-const Box = styled.div`
-  width: 100px; // Fixed width
-  height: 100px; // Fixed height
-  padding: 20px;
-  margin: 10px; // Ensure the total width calculation accounts for this margin.
-  border: 1px solid black;
-  text-align: center;
-  background-color: lightgrey;
-`;
-
-export default function Component() {
-  const [activeBoxes, setActiveBoxes] = useState(Array(8).fill(false));
-
-  const toggleBox = (index) => {
-    setActiveBoxes(current =>
-      current.map((active, i) => (i === index ? !active : active))
-    );
+  const handleClick = id => {
+    setActiveBoxes(current => {
+      const isActive = current.includes(id);
+      return isActive ? current.filter(boxId => boxId !== id) : [...current, id];
+    });
   };
 
+  const transitions = useTransition(activeBoxes, {
+    keys: item => item,
+    from: { opacity: 0, transform: 'translateX(0px)' },
+    enter: item => async (next, cancel) => {
+      await next({ opacity: 1, transform: `translateX(${activeBoxes.indexOf(item) * 110 - (activeBoxes.length - 1) * 55}px)` });
+    },
+    update: item => async (next, cancel) => {
+      await next({ opacity: 1, transform: `translateX(${activeBoxes.indexOf(item) * 110 - (activeBoxes.length - 1) * 55}px)` });
+    },
+    leave: { opacity: 0, transform: 'translateX(0px)' },
+    config: { tension: 200, friction: 20 },
+  });
+
   return (
-    <Wrapper>
-      <div>
-        {Array.from({ length: 8 }, (_, index) => (
-          <Button key={index} onClick={() => toggleBox(index)}>
-            Toggle Box {index + 1}
-          </Button>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        {boxes.map(box => (
+          <button key={box.id} onClick={() => handleClick(box.id)} style={{ margin: '5px' }}>
+            Toggle Box {box.id}
+          </button>
         ))}
       </div>
-      <Container>
-        {activeBoxes.map((isActive, index) =>
-          isActive && <Box key={index}>Box {index + 1}</Box>
-        )}
-      </Container>
-    </Wrapper>
+      <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', height: '100px' }}>
+      {transitions((style, item) => {
+  const box = boxes.find(box => box.id === item);
+  if (!box) return null; 
+
+  return (
+    <animated.div
+      style={{
+        ...style,
+        position: 'absolute',
+        width: '100px',
+        height: '100px',
+        backgroundColor: box.color,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      Box {item}
+    </animated.div>
+  );
+})}
+      </div>
+    </div>
   );
 };
+
+export default BoxesComponent;

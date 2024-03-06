@@ -25,11 +25,17 @@ const BoxesComponent = () => {
   const transitions = useTransition(activeBoxes, {
     keys: item => item,
     from: { opacity: 0, transform: 'translateX(0px)' },
-    enter: item => async (next, cancel) => {
-      await next({ opacity: 1, transform: `translateX(${activeBoxes.indexOf(item) * 110 - (activeBoxes.length - 1) * 55}px)` });
+    enter: item => {
+      const index = activeBoxes.indexOf(item);
+      const yPos = index >= 4 ? 120 : 0; // Posição Y baseada no índice, move para baixo se for a 5ª caixa ou posterior
+      const xPos = (index % 4) * 110 - (Math.min(activeBoxes.length, 4) - 1) * 55; // Posição X baseada no índice, ajustando para o número de caixas na linha
+      return { opacity: 1, transform: `translate(${xPos}px, ${yPos}px)` };
     },
-    update: item => async (next, cancel) => {
-      await next({ opacity: 1, transform: `translateX(${activeBoxes.indexOf(item) * 110 - (activeBoxes.length - 1) * 55}px)` });
+    update: item => {
+      const index = activeBoxes.indexOf(item);
+      const yPos = index >= 4 ? 120 : 0;
+      const xPos = (index % 4) * 110 - (Math.min(activeBoxes.length, 4) - 1) * 55;
+      return { opacity: 1, transform: `translate(${xPos}px, ${yPos}px)` };
     },
     leave: { opacity: 0, transform: 'translateX(0px)' },
     config: { tension: 200, friction: 20 },
@@ -44,28 +50,27 @@ const BoxesComponent = () => {
           </button>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', height: '100px' }}>
-      {transitions((style, item) => {
-  const box = boxes.find(box => box.id === item);
-  if (!box) return null; 
-
-  return (
-    <animated.div
-      style={{
-        ...style,
-        position: 'absolute',
-        width: '100px',
-        height: '100px',
-        backgroundColor: box.color,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      Box {item}
-    </animated.div>
-  );
-})}
+      <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', minHeight: '240px', width: '440px' }}>
+        {transitions((style, item) => {
+          const box = boxes.find(box => box.id === item);
+          return (
+            <animated.div
+              key={item}
+              style={{
+                ...style,
+                position: 'absolute',
+                width: '100px',
+                height: '100px',
+                backgroundColor: box.color,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              Box {item}
+            </animated.div>
+          );
+        })}
       </div>
     </div>
   );

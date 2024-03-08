@@ -1,7 +1,8 @@
 import Component from "./components/Component";
+import SubClass from "./components/SubClass";
 
 function App(){
-  return <Component/>
+  return <SubClass/>
 }
 
 export default App

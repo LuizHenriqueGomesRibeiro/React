@@ -1,8 +1,7 @@
-import Component from "./components/Component";
-import SubClass from "./components/SubClass";
+import Component from "./components/Component"
 
 function App(){
-  return <SubClass/>
+  return <Component number='232323.13'/>
 }
 
 export default App

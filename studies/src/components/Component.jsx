@@ -1,16 +1,6 @@
-import React from 'react';
+import React from "react";
+import SubClass from "../Class/SubClass";
 
-export default class Component extends React.Component {
-  formatToBRL = (number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(number);
-  };
-
-  render() {
-    return <div>Hello class by sub</div>;
-  }
+export default function Component() {
+    return <SubClass number='232323.13'/>
 }
